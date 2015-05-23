@@ -1,0 +1,47 @@
+<html>
+<head>
+	<title>Epic Button Game</title>
+	<link rel="stylesheet" href="/css/style.css">
+	<script src="/js/jquery.js"></script>
+	<script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script type ="text/javascript">
+		$(document).ready(function (){
+			// this triggers the connection event in our server!
+			var socket = io.connect();
+			// write all the socket stuff here
+			$('#epic').submit(function(){
+					socket.emit("posting_form", {
+						counter: $('#counter').val()
+					});
+					return false;	
+				});
+				$('#epicReset').click(function(){
+					console.log("here");
+					socket.emit("posting_form_reset", {
+						counter: 0
+					});
+					return false;	
+				});		
+				socket.on('my_full_broadcast_even', function(data){
+					$('.box').html('<p>The button has been pused '+ data.counter +' time(s)</p>');
+				});
+				socket.on('updated_message_reset', function(data){
+					$('.box').html('<p>The button has been pused '+ data.counter +' time(s)</p>');
+				});
+
+		});
+	</script>
+</head>
+<body>
+	<div class="box"></div>
+	<h1>Epic Button Game</h1>
+	<form id="epic" method="post" action="/">
+		<input id="counter" type="hidden" name="counter" value="1">
+		<label>Push the button to update the count!!</label>
+		<input type="submit" value="Push the epic button">
+	</form>
+	<button id="epicReset" type="submit">Reset</button>
+	
+
+</body>
+</html>
